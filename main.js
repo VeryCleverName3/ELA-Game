@@ -173,7 +173,7 @@ function attackManager(){
       winner = "blue";
     }
   }
-  if(keyDown[190] && p1.blink > 0.2){
+  if(keyDown[190] && p2.blink > 0.2){
     p2.blink -= 0.03;
     if(p2.blink <= 0.2){
       p2.blink = 0;
