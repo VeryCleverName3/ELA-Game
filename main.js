@@ -211,7 +211,7 @@ function doObstacleStuff(){
         var max = obstacles[i][0];
         var directionWeird = false;
       }
-      ctx.strokeStyle = "red";
+      ctx.strokeStyle = obstacles[i][3];
       ctx.lineWidth = 20;
       ctx.beginPath();
       ctx.moveTo(s * obstacles[i][0], s);
@@ -256,7 +256,7 @@ function doObstacleStuff(){
 function generateObstacle(){
   var rand = Math.floor(Math.random() + 0.5);
   if(rand == 0) rand -= 1;
-  obstacles[obstacles.length] = [Math.random() + rand, Math.random() + rand, rand];
+  obstacles[obstacles.length] = [Math.random() + rand, Math.random() + rand, rand, colors[Math.floor(Math.random() * 9)]];
 }
 
 var c = document.getElementById("gameCanvas");
@@ -268,6 +268,8 @@ s = c.width;
 var gameOver = false;
 
 var obstacles = [];
+
+var colors = ["blue", "green", "yellow", "red", "pink", "orange", "purple", "cyan", "magenta"];
 
 var winner = "none";
 
