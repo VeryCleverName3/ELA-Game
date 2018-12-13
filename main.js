@@ -1,10 +1,11 @@
 function update(){
-  if(!gameOver){
+  if(!gameOver && !keyDown[32]){
     updatePlayerPositions();
     drawPlayers();
     blinkManager();
     attackManager();
-  } else gameOverScreen();
+    doObstacleStuff();
+  } else if(!keyDown[32]) gameOverScreen();
 }
 
 function gameOverScreen(){
@@ -88,6 +89,7 @@ function blinkManager(){
 function drawPlayers(){
   ctx.clearRect(0, 0, s, s);
   ctx.strokeStyle = "black";
+  ctx.lineWidth = 5;
   ctx.strokeRect(0, 0, s, s);
 
   //Draw blue square
@@ -191,6 +193,47 @@ function attackManager(){
   }
 }
 
+function doObstacleStuff(){
+  for(var i = 0; i < obstacles.length; i++){
+    if(typeof(obstacles[i][0] != "undefined")){
+      if(obstacles[i][2] == -1){
+        obstacles[i][0] += 0.01;
+        obstacles[i][1] += 0.01;
+      } else {
+        obstacles[i][0] -= 0.01;
+        obstacles[i][1] -= 0.01;
+      }
+      if(obstacles[i][1] >= obstacles[i][0]){
+        var min = obstacles[i][0];
+        var max = obstacles[i][1];
+      } else {
+        var min = obstacles[i][1];
+        var max = obstacles[i][0];
+      }
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 20;
+      ctx.beginPath();
+      ctx.moveTo(s * obstacles[i][0], s);
+      ctx.lineTo(s * obstacles[i][1], 0);
+      ctx.stroke();
+      ctx.closePath();
+      //console.log(((p1.x - min) / (max - min)) + ", " + p1.y);
+      if(p1.y + 0.075 >= 1 - ((p1.x - min) / (max - min)) && p1.y - 0.075 <= 1 - ((p1.x - min) / (max - min))){
+        gameOver = true;
+        winner = "red";
+      }
+      if(Math.abs(obstacles[i][0]) >= 2){
+        obstacles[i][0] = undefined;
+      }
+    }
+  }
+}
+function generateObstacle(){
+  var rand = Math.floor(Math.random() + 0.5);
+  if(rand == 0) rand -= 1;
+  obstacles[obstacles.length] = [Math.random() + rand, Math.random() + rand, rand];
+}
+
 var c = document.getElementById("gameCanvas");
 var ctx = c.getContext("2d");
 c.height = window.innerHeight;
@@ -198,6 +241,8 @@ c.width = c.height;
 s = c.width;
 
 var gameOver = false;
+
+var obstacles = [];
 
 var winner = "none";
 
@@ -243,3 +288,5 @@ onkeyup = function(e){
 }
 
 setInterval(update, 1000 / 60);
+
+setInterval(generateObstacle, 1500);
