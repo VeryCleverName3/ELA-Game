@@ -306,6 +306,7 @@ var p2 = {
 onkeydown = function(e){
   keyDown[e.which] = true;
   console.log(e.which);
+  if(gameOver) window.location = "";
 }
 
 onkeyup = function(e){
