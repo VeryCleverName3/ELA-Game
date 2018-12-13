@@ -9,6 +9,7 @@ function update(){
 }
 
 function gameOverScreen(){
+  //stop timing control and draw text
   clearInterval(mainLoop);
   ctx.textAlign = "center";
   ctx.font = "40px impact";
@@ -32,6 +33,7 @@ function blinkManager(){
     p2.blink += 0.01;
   }
 
+  //Don't touch this- it's infected
   if(p1.blinking){
     p1.blinking = false;
     p1.newx = p1.x;
@@ -101,6 +103,7 @@ function drawPlayers(){
 }
 
 function updatePlayerPositions(){
+  //Most efficient way to do movement for sure. Other ways don't exist
   if(keyDown[87]){
     p1.y -= p1.speed;
   }
@@ -168,6 +171,7 @@ function attackManager(){
     ctx.arc(p1.x * s, p1.y * s, s / 20, 0, 2 * Math.PI);
     ctx.fill();
     ctx.closePath();
+    //check for distance
     if(Math.hypot(p1.x - p2.x, p1.y - p2.y)  <= (1/20)){
       console.log("blue wins");
       gameOver = true;
@@ -211,6 +215,8 @@ function doObstacleStuff(){
         var max = obstacles[i][0];
         var directionWeird = false;
       }
+
+      //drawing the lines
       ctx.strokeStyle = obstacles[i][3];
       ctx.lineWidth = 20;
       ctx.beginPath();
@@ -219,6 +225,7 @@ function doObstacleStuff(){
       ctx.stroke();
       ctx.closePath();
       //console.log(((p1.x - min) / (max - min)) + ", " + p1.y);
+      //collision detection
       if(!directionWeird){
         if(p1.y + 0.05 >= ((p1.x - min) / (max - min)) && p1.y - 0.05 <= ((p1.x - min) / (max - min))){
           gameOver = true;
@@ -254,6 +261,7 @@ function doObstacleStuff(){
   }
 }
 function generateObstacle(){
+  //just adds values to the array that doObstacleStuff() uses.
   var rand = Math.floor(Math.random() + 0.5);
   if(rand == 0) rand -= 1;
   obstacles[obstacles.length] = [Math.random() + rand, Math.random() + rand, rand, colors[Math.floor(Math.random() * 9)]];
@@ -305,6 +313,7 @@ var p2 = {
   trailTimer : 0
 };
 
+//Event listeners check for keyboard input and put it into global array for usage by other functions
 onkeydown = function(e){
   keyDown[e.which] = true;
   console.log(e.which);
@@ -315,6 +324,7 @@ onkeyup = function(e){
   keyDown[e.which] = false;
 }
 
+//Just a timing loop
 var mainLoop = setInterval(update, 1000 / 60);
 
 setInterval(generateObstacle, 1500);
