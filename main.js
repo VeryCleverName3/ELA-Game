@@ -1,16 +1,15 @@
 function update(){
-  if(!gameOver && !keyDown[32]){
+  if(!gameOver){
     updatePlayerPositions();
     drawPlayers();
     blinkManager();
     attackManager();
     doObstacleStuff();
-  } else if(!keyDown[32]) gameOverScreen();
+  } else gameOverScreen();
 }
 
 function gameOverScreen(){
-  ctx.fillStyle = winner;
-  ctx.fillRect(0, 0, s, s);
+  clearInterval(mainLoop);
   ctx.textAlign = "center";
   ctx.font = "40px impact";
   ctx.fillStyle = "black";
@@ -206,9 +205,11 @@ function doObstacleStuff(){
       if(obstacles[i][1] >= obstacles[i][0]){
         var min = obstacles[i][0];
         var max = obstacles[i][1];
+        var directionWeird = true; // I'm good at naming variables. Don't judge.
       } else {
         var min = obstacles[i][1];
         var max = obstacles[i][0];
+        var directionWeird = false;
       }
       ctx.strokeStyle = "red";
       ctx.lineWidth = 20;
@@ -218,9 +219,33 @@ function doObstacleStuff(){
       ctx.stroke();
       ctx.closePath();
       //console.log(((p1.x - min) / (max - min)) + ", " + p1.y);
-      if(p1.y + 0.075 >= 1 - ((p1.x - min) / (max - min)) && p1.y - 0.075 <= 1 - ((p1.x - min) / (max - min))){
+      if(!directionWeird){
+        if(p1.y + 0.05 >= ((p1.x - min) / (max - min)) && p1.y - 0.05 <= ((p1.x - min) / (max - min))){
+          gameOver = true;
+          winner = "red";
+        }
+      } else if(p1.y + 0.05 >= 1 - ((p1.x - min) / (max - min)) && p1.y - 0.05 <= 1 - ((p1.x - min) / (max - min))){
         gameOver = true;
         winner = "red";
+      }
+      if(!directionWeird){
+        if(p2.y + 0.05 >= ((p2.x - min) / (max - min)) && p2.y - 0.05 <= ((p2.x - min) / (max - min))){
+          gameOver = true;
+          winner = "blue";
+        }
+      } else if(p2.y + 0.05 >= 1 - ((p2.x - min) / (max - min)) && p2.y - 0.05 <= 1 - ((p2.x - min) / (max - min))){
+        gameOver = true;
+        winner = "blue";
+      }
+      if(max - min <= 0.06){
+        if(p1.x >= min && p1.x <= max){
+          gameOver = true;
+          winner = "red";
+        }
+        if(p2.x >= min && p2.x <= max){
+          gameOver = true;
+          winner = "blue";
+        }
       }
       if(Math.abs(obstacles[i][0]) >= 2){
         obstacles[i][0] = undefined;
@@ -287,6 +312,6 @@ onkeyup = function(e){
   keyDown[e.which] = false;
 }
 
-setInterval(update, 1000 / 60);
+var mainLoop = setInterval(update, 1000 / 60);
 
 setInterval(generateObstacle, 1500);
