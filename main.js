@@ -316,6 +316,7 @@ var p2 = {
 //Event listeners check for keyboard input and put it into global array for usage by other functions
 onkeydown = function(e){
   keyDown[e.which] = true;
+  e.preventDefault();
   console.log(e.which);
   if(gameOver && e.which == 32) window.location = "";
 }
